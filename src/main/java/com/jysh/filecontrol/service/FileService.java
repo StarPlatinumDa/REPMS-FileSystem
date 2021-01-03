@@ -42,11 +42,16 @@ public class FileService {
     public String storeFile(MultipartFile file){
         //获得文件名
         String fileName = StringUtils.cleanPath(file.getOriginalFilename());
+        //加上当前时间戳确保文件名唯一
+        String temp[]=fileName.split("\\.");
+        fileName=temp[0]+System.currentTimeMillis()+"."+temp[1];
+
         try {
             //检查文件名是否含有非法字符
             if(fileName.contains("..")){
                 throw new FileException("文件名中存在非法字符！"+fileName);
             }
+            System.out.println(fileName);
             Path targetLocation = this.fileStorageLocation.resolve(fileName);
             //以复制的形式存储文件
             Files.copy(file.getInputStream(), targetLocation, StandardCopyOption.REPLACE_EXISTING);

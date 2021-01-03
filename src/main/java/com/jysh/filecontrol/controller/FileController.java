@@ -9,6 +9,7 @@ import org.springframework.core.io.Resource;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
@@ -33,13 +34,15 @@ public class FileController {
 
     @PostMapping("/uploadFile")
     public UploadFileResponse uploadFile(@RequestParam("file") MultipartFile file){
+        //真实的名字，不同于存储在服务器中的名字
+        String realName = StringUtils.cleanPath(file.getOriginalFilename());
         //存储文件并得到本地绝对存储路径
         String fileName = fileService.storeFile(file);
 
         String fileDownloadUri= ServletUriComponentsBuilder.fromCurrentContextPath()
                 .path("/downloadFile/").path(fileName).toUriString();
         //返回给前端参数
-        return new UploadFileResponse(fileName,fileDownloadUri,file.getContentType(),file.getSize());
+        return new UploadFileResponse(realName,fileDownloadUri,file.getContentType(),file.getSize());
     }
 
     @PostMapping("/uploadMultipleFiles")
