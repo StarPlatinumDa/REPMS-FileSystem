@@ -82,4 +82,9 @@ public class FileService {
             throw new FileException("File not found " + fileName, ex);
         }
     }
+
+    public Path deletePath(String fileName){
+        Path filePath = this.fileStorageLocation.resolve(fileName).normalize();
+        return filePath;
+    }
 }

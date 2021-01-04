@@ -16,7 +16,10 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
+import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -66,10 +69,24 @@ public class FileController {
         if(contentType == null){
             contentType = "application/octet-stream";
         }
-        System.out.println("啊啊啊");
         return ResponseEntity.ok().contentType(MediaType.parseMediaType(contentType))
                 .header(HttpHeaders.CONTENT_DISPOSITION,
                         "attachment; filename=\""+ resource.getFilename() + "\"")
                 .body(resource);
+    }
+    @DeleteMapping("/deleteFile/{fileName:.+}")
+    public boolean deleteByFileName(@PathVariable String fileName){
+
+
+        Path filePath=fileService.deletePath(fileName);
+        File file=filePath.toFile();
+        if(file.exists()){
+            file.delete();
+            System.out.println("删除成功！");
+            return true;
+        }else {
+            System.out.println("删除失败！");
+            return false;
+        }
     }
 }
